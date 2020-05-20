@@ -1,0 +1,40 @@
+version: "3"
+services:
+  #php-7.4-apache
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: php-app
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .:/var/www
+    networks:
+      - app-network
+  db:
+    image: mysql:5.7.22
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: my_db
+      MYSQL_ROOT_PASSWORD: 1234
+    networks:
+      - app-network
+    volumes:
+      - dbdata:/var/lib/mysql
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+      driver: local
